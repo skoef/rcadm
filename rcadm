@@ -101,42 +101,6 @@ do_disable ()
 	set_setting ${service} NO
 }
 
-do_annotate ()
-{
-	local setting=${1}
-	local annotation="${2}"
-
-	if ! has_setting ${setting}
-	then
-		echo "${setting} not found" 2>&1
-		return 1
-	fi
-
-	local maxwidth=80
-	local indent=32
-
-	# TODO: remove potential current annotation
-	# get size of setting
-	local fullsetting=$(grep -oE "^smokeping_pidfile=.*\"" ${RCFILE})
-	if [ $((${#fullsetting} + ${#annotation})) -lt ${maxwidth} ]
-	then
-		# annotation behind setting
-		local escvalue=$(get_setting ${setting} | sed 's#/#\\/#g')
-		local escann=$(echo ${annotation} | sed 's#/#\\/#g')
-		sed -i '' "s/^${setting}=.*/${setting}=\"${escvalue}\" # ${escann}/" ${RCFILE}
-	else
-		# annotation beneath setting
-		echo ${annotation} | fold -w $((${maxwidth} - ${indent})) | tail -r | while read -r line
-		do
-			line=$(perl -E "print \" \" x ${indent}; print \" # ${line}\n\";")
-			# TODO: escape setting
-			sed -i '' "/^${setting}=/a \\
-			\\ ${line} 
-			" ${RCFILE} 
-		done
-	fi
-}
-
 do_list ()
 {
 	grep -E '^[a-zA-Z]+' ${RCFILE} | sort
@@ -167,7 +131,7 @@ case $1 in
 		MODE="delete"
 		ARGC=1
 		;;
-	set|annotate)
+	set)
 		MODE=$1
 		ARGC=2
 		;;
