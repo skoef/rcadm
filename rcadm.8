@@ -1,0 +1,86 @@
+.Dd May 27, 2013
+.Dt RCADM 8
+.Os FreeBSD
+.Sh NAME
+.Nm rcadm
+.Nd utility for administrating rc.conf
+.Sh SYNOPSIS
+.Nm
+.Cm command [...]
+
+.Sh DESCRIPTION
+The
+.Nm
+utility is used to retrieve and adjust settings and enable of disable services in rc.conf.
+.Pp
+.Nm
+allows you to atomically manage your rc.conf, without the need to edit it directly. Furthermore, 
+.Nm
+makes it easy to script adjustments to rc.conf.
+
+.Sh COMMANDS
+The
+.Cm command
+can be any one of the following:
+.Bl -tag -width "set argument value"
+.\"list
+.It Cm list
+List all settings in 
+.Pa /etc/rc.conf .
+Alias is 
+.Cm ls .
+.\"get
+.It Cm get Ar argument
+Get value for given 
+.Ar argument .
+Return value 1 when argument is not found.
+.\"delete
+.It Cm delete Ar argument
+Delete setting from 
+.Pa /etc/rc.conf . 
+Aliases are
+.Cm del , remove 
+and 
+.Cm rm .
+.\"set
+.It Cm set Ar argument value
+Set
+.Ar value
+for 
+.Ar argument .
+This works for both services and settings. Overwrites the setting when it exists, adds the setting otherwise.
+.\"enable
+.It Cm enable Ar service
+Sets _enable setting to YES for given
+.Ar service . 
+Adds service setting when not set already.
+.\"disable
+.It Cm disable Ar service
+Sets _enable setting to NO for given 
+.Ar service .
+Adds service setting when not set already.
+.El
+
+.Sh ENVIRONMENT
+.Bl -tag -width RCFILE
+.It RCFILE
+Overrides location of system configuration file (default:
+.Ar /etc/rc.conf
+)
+.Sh DIAGNOSTICS
+When command is executed normally, exit status is 0. When given argument 
+is not found, exit status 1 is returned. When given command is not 
+supported, exit status 2 is returned.
+
+.Sh FILES
+.Bl -tag -width "/etc/rc.conf"
+.It /etc/rc.conf
+Default location of the system configuration file.
+.El
+
+.Sh SEE ALSO
+.Xr rc.conf 5 ,
+.Xr service 8
+
+.Sh AUTHORS
+.An Reinier Schoof <reinier@skoef.nl>
